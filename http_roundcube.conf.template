@@ -2,6 +2,7 @@
 
 	# Derived from /etc/apache2/sites-available/default-ssl.conf. For more
 	# info on Apache2/Debian, see /usr/share/doc/apache2/README.Debian.gz
+	# See also global directives in /etc/apache2/conf-enabled/roundcube.conf
 
 	<VirtualHost *:443>
 		ServerAdmin webmaster@${DOMAIN}
