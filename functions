@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# proxy_port(container, service, from, to)
+
+function add_proxy_port {
+
+  lxc config device add ${1} ${2} proxy \
+        listen=tcp:${3} \
+        connect=tcp:${4} \
+        nat=true
+
+  return $?
+}
+
+# Call with a hostname to get an IP address back
+function dns_check_A {
+
+    local IP="UNRESOLVED"
+
+    if [ -x /usr/bin/host ]; then
+        IP=$(host -4 ${1} | grep ${1} | cut -d' ' -f 4)
+    else
+        IP=$(resolvectl query ${1} -4 | grep ${1} | cut -d' ' -f 2)
+    fi    
+
+    echo  ${IP}
+}
+
+# Call with a domain, get the highest priority MX host.
+function dns_check_MX {
+
+    local MX="UNRESOLVED"
+
+    if [ -x /usr/bin/host ]; then
+        MX=$(host -t mx ${1}|cut -d' ' -f 6-|sort -n|head -1|cut -d' ' -f 2)
+    else
+        MX=$(resolvectl query -t mx ${1}|grep ${1}|cut -d' ' -f 4-|sort -n|head -1|cut -d' ' -f 2)
+    fi    
+
+    # Return the response with any trailing '.' removed.
+    echo  ${MX%.}
+}
+
+# Call with an IP address, and get the PTR host back
+function dns_check_PTR {
+
+    local PTR="UNRESOLVED"
+
+    if [ -x /usr/bin/host ]; then
+        PTR=$(host 88.96.224.186|cut -d' ' -f 5)
+    else
+        PTR=$(resolvectl query 88.96.224.186|grep mail.outvoted.uk|cut -d' ' -f 2)
+    fi
+
+    # Return the response with any trailing '.' removed.
+    echo  ${PTR%.}
+}

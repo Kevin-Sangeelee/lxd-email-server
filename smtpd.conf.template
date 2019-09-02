@@ -1,0 +1,47 @@
+# This is the smtpd server system-wide configuration file.
+# See smtpd.conf(5) for more information.
+
+# Name the private key and certificate to be used for TLS connections defined
+# in the 'listen' configuration lines.
+#
+pki letsencrypt certificate "/etc/letsencrypt/acme.sh/fullchain-${DOMAIN}.pem"
+pki letsencrypt key "/etc/letsencrypt/acme.sh/cert-${DOMAIN}.key"
+
+# To accept external mail, replace with: listen on all
+#
+listen on 127.0.0.1 port 25 hostname mail.${DOMAIN} tls pki letsencrypt
+listen on 127.0.0.1 port 587 hostname mail.${DOMAIN} tls-require pki letsencrypt auth mask-source
+listen on eth0 port 25 hostname mail.${DOMAIN} tls pki letsencrypt
+listen on eth0 port 587 hostname mail.${DOMAIN} tls-require pki letsencrypt auth mask-source
+
+listen on lo port 10029 tag DKIM_OUT # DKIMproxy returns signed mail here
+
+# Force IPv4 for outgoing connections. Currently, Google are strict about
+# IPv6 reverse DNS being configured, yet IPv6 support among hosting providers
+# is scant at best. This can be removed if you can configure IPv6 PTR records.
+#
+limit mta inet4
+
+# If you edit the file, you have to run "smtpctl update table aliases"
+#
+table aliases file:/etc/aliases
+
+# Accept rules are tested in the order defined until a match is found.
+
+# Accept mail from any IP for our main domain, deliver locally. This can be
+# repeated to support further domains.
+#
+accept from any for domain "${DOMAIN}" alias <aliases> deliver to maildir
+
+# Accept any mail for localhost or the server name (e.g. mail.${DOMAIN})
+#
+accept for local alias <aliases> deliver to maildir
+
+# Any mail tagged as having been through DKIMproxy can be relayed.
+#
+accept tagged DKIM_OUT for any relay
+
+# Accept any local-source mail and send to DKIMproxy to be signed.
+#
+accept from local for any relay via smtp://127.0.0.1:10028
+

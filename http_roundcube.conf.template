@@ -1,0 +1,36 @@
+<IfModule mod_ssl.c>
+
+	# Derived from /etc/apache2/sites-available/default-ssl.conf. For more
+	# info on Apache2/Debian, see /usr/share/doc/apache2/README.Debian.gz
+
+	<VirtualHost *:443>
+		ServerAdmin webmaster@${DOMAIN}
+		ServerName  webmail.${DOMAIN}
+
+		DocumentRoot /var/lib/roundcube/
+
+		ErrorLog ${APACHE_LOG_DIR}/roundcube-error.log
+		CustomLog ${APACHE_LOG_DIR}/roundcube-access.log combined
+
+		#   SSL Engine Switch:
+		#   Enable/Disable SSL for this virtual host.
+		SSLEngine on
+
+		# If both key and certificate are stored in the same file, only
+		# the SSLCertificateFile directive is needed.
+
+		SSLCertificateFile      /etc/letsencrypt/acme.sh/cert-${DOMAIN}.pem
+		SSLCertificateKeyFile   /etc/letsencrypt/acme.sh/cert-${DOMAIN}.key
+		SSLCertificateChainFile /etc/letsencrypt/acme.sh/fullchain-${DOMAIN}.pem
+
+		<FilesMatch "\.(cgi|shtml|phtml|php)$">
+				SSLOptions +StdEnvVars
+		</FilesMatch>
+		<Directory /usr/lib/cgi-bin>
+				SSLOptions +StdEnvVars
+		</Directory>
+
+	</VirtualHost>
+</IfModule>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
