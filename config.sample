@@ -1,0 +1,13 @@
+# The public IP address of your host (e.g. your VPS)
+HOST_IPv4="1.2.3.4"
+
+# The domain you have registered with a registrar.
+DOMAIN="example.com"
+
+# Your main email user account name
+PRIMARY_USER="alice"
+
+# Define the container details
+CONTAINER_NAME="mymail"
+LXD_NETWORK="lxdbr0"
+

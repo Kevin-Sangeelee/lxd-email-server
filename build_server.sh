@@ -1,20 +1,7 @@
 #!/bin/bash
 
 . "functions"
-
-# The public IP address of your host (e.g. your VPS)
-HOST_IPv4="88.96.224.186"
-
-# The domain you have registered with a registrar.
-DOMAIN="outvoted.uk"
-
-# Your main email user account name
-PRIMARY_USER="kevin"
-
-# Define the container details
-CONTAINER_NAME="mailtest"
-LXD_NETWORK="lxdbr0"
-
+. "config"
 
 HOSTS="www.${DOMAIN} mail.${DOMAIN} webmail.${DOMAIN}"
 
