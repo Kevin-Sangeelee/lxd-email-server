@@ -16,3 +16,6 @@ Any pull requests for generally useful additional features are welcome.
 
 ## Altnernative
 The project mail-in-a-box https://github.com/mail-in-a-box/mailinabox is a turnkey solution that's mature and appears to be well documented for non-technical users. My lxd-email-server project, on the other hand, is intended as more of a shortcut or reference for people who could configure this themselves, but choose not to for whatever reason.
+
+## Acknowledgements
+All credits go to the people who contribute to the projects mentioned here - OpenSMTPD, Dovecot, Roundcube, DKIMProxy, acme.sh, and of course Apache, GNU, Linux, and the Debian maintainers, whose well considered efforts mean that I can script an automated installation and configuration in a small bash script. Thanks!
