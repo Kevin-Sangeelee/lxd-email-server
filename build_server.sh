@@ -1,6 +1,13 @@
 #!/bin/bash
 
 . "functions"
+
+if [ ! -f "config" ]; then
+    echo "Copy 'config.sample' to 'config' and edit the parameters for your VPS and domain."
+    echo "Re-run this script when you have done this."
+    exit
+fi
+
 . "config"
 
 HOSTS="www.${DOMAIN} mail.${DOMAIN} webmail.${DOMAIN}"
