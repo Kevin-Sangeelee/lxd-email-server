@@ -197,7 +197,8 @@ sed -E -i "s/^(${CONFIG_TAG}'mail_domain'] = ).*/\\1'${DOMAIN}';/" /etc/roundcub
 
 # Set the DKIM selector. This is ultimately used to identify which TXT record
 # to consult when fetching our DKIM public key via DNS.
-sed -E -i 's/^(selector ).+/\1 mainsel/' /etc/dkimproxy/dkimproxy_out.conf
+sed -E -i -e 's/^(selector ).+/\1 mainsel/' \\
+          -e 's/^domain .+/domain  ${DOMAIN}/' /etc/dkimproxy/dkimproxy_out.conf
 
 a2enmod ssl
 
