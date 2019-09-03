@@ -20,7 +20,7 @@ function dns_check_A {
     if [ -x /usr/bin/host ]; then
         IP=$(host -4 ${1} | grep ${1} | cut -d' ' -f 4)
     else
-        IP=$(resolvectl query ${1} -4 | grep ${1} | cut -d' ' -f 2)
+        IP=$(systemd-resolve ${1} -4 | grep ${1} | cut -d' ' -f 2)
     fi    
 
     echo  ${IP}
@@ -34,7 +34,7 @@ function dns_check_MX {
     if [ -x /usr/bin/host ]; then
         MX=$(host -t mx ${1}|cut -d' ' -f 6-|sort -n|head -1|cut -d' ' -f 2)
     else
-        MX=$(resolvectl query -t mx ${1}|grep ${1}|cut -d' ' -f 4-|sort -n|head -1|cut -d' ' -f 2)
+        MX=$(systemd-resolve -t mx ${1}|grep ${1}|cut -d' ' -f 4-|sort -n|head -1|cut -d' ' -f 2)
     fi    
 
     # Return the response with any trailing '.' removed.
@@ -47,9 +47,9 @@ function dns_check_PTR {
     local PTR="UNRESOLVED"
 
     if [ -x /usr/bin/host ]; then
-        PTR=$(host 88.96.224.186|cut -d' ' -f 5)
+        PTR=$(host ${1}|cut -d' ' -f 5)
     else
-        PTR=$(resolvectl query 88.96.224.186|grep mail.outvoted.uk|cut -d' ' -f 2)
+        PTR=$(systemd-resolve ${1}|grep 'link:'|cut -d' ' -f 2)
     fi
 
     # Return the response with any trailing '.' removed.
