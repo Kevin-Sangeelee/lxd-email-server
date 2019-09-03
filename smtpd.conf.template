@@ -9,10 +9,10 @@ pki letsencrypt key "/etc/letsencrypt/acme.sh/cert-${DOMAIN}.key"
 
 # To accept external mail, replace with: listen on all
 #
-listen on 127.0.0.1 port 25 hostname mail.${DOMAIN} tls pki letsencrypt
-listen on 127.0.0.1 port 587 hostname mail.${DOMAIN} tls-require pki letsencrypt auth mask-source
-listen on eth0 port 25 hostname mail.${DOMAIN} tls pki letsencrypt
-listen on eth0 port 587 hostname mail.${DOMAIN} tls-require pki letsencrypt auth mask-source
+listen on 127.0.0.1 port 25 hostname ${MAIL_FQDN} tls pki letsencrypt
+listen on 127.0.0.1 port 587 hostname ${MAIL_FQDN} tls-require pki letsencrypt auth mask-source
+listen on eth0 port 25 hostname ${MAIL_FQDN} tls pki letsencrypt
+listen on eth0 port 587 hostname ${MAIL_FQDN} tls-require pki letsencrypt auth mask-source
 
 listen on lo port 10029 tag DKIM_OUT # DKIMproxy returns signed mail here
 

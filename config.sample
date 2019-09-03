@@ -1,5 +1,10 @@
 # The public IP address of your host (e.g. your VPS)
-HOST_IPv4="1.2.3.4"
+PUBLIC_IPv4="1.2.3.4"
+
+# This is usually the same as your public IP, but some ISPs give you an IP on a
+# private network and NAT traffic from your public address.  You can set this
+# accordingly.
+HOST_IPv4="10.20.30.1"
 
 # The domain you have registered with a registrar.
 DOMAIN="example.com"

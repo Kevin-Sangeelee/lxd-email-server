@@ -6,7 +6,7 @@
 
 	<VirtualHost *:443>
 		ServerAdmin webmaster@${DOMAIN}
-		ServerName  webmail.${DOMAIN}
+		ServerName  ${WEBMAIL_FQDN}
 
 		DocumentRoot /var/lib/roundcube/
 

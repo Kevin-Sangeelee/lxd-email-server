@@ -2,6 +2,16 @@
 
 . "functions"
 
+PREREQUISITES="yes"	# Assume all ok, unless we discover otherwise
+
+which snap >/dev/null || { echo "No snap command. Please 'sudo apt-get install snapd' first"; unset PREREQUISITES; }
+which lxc >/dev/null || { echo "No lxc command. Please 'sudo snap install lxd' first"; unset PREREQUISITES; }
+
+if [ "${PREREQUISITES}" != "yes" ]; then
+    echo "Re-run this script when the listed prerequisites are done."
+    exit 1
+fi
+
 if [ ! -f "config" ]; then
     echo "Copy 'config.sample' to 'config' and edit the parameters for your VPS and domain."
     echo "Re-run this script when you have done this."
@@ -10,7 +20,11 @@ fi
 
 . "config"
 
-HOSTS="www.${DOMAIN} mail.${DOMAIN} webmail.${DOMAIN}"
+WWW_FQDN="www.${DOMAIN}"
+WEBMAIL_FQDN="webmail.${DOMAIN}"
+MAIL_FQDN="ponder.${DOMAIN}"
+
+HOSTS="${MAIL_FQDN} ${WEBMAIL_FQDN}"
 
 # Stage 1 - make sure the DNS entries are correct for what we
 #           are about to do.
@@ -19,15 +33,15 @@ HOSTS="www.${DOMAIN} mail.${DOMAIN} webmail.${DOMAIN}"
 
 MX_HOST=$(dns_check_MX $DOMAIN)
 
-if [ "$MX_HOST" != "mail.${DOMAIN}" ]; then
-    echo "DNS Config: the top MX host for ${DOMAIN} is not mail.${DOMAIN}"
+if [ "$MX_HOST" != "${MAIL_FQDN}" ]; then
+    echo "DNS Config: the top MX host for ${DOMAIN} is not ${MAIL_FQDN}"
     exit
 fi
 
 ACME_DOMAINS=''
 
 # Certificate to include the root domain if it resolves to our public IP
-if [ "$(dns_check_A ${DOMAIN})" == "${HOST_IPv4}" ]; then
+if [ "$(dns_check_A ${DOMAIN})" == "${PUBLIC_IPv4}" ]; then
     ACME_DOMAINS="-d ${DOMAIN}"
 fi
 
@@ -36,19 +50,19 @@ for d in ${HOSTS}; do
 
     d_IP=$(dns_check_A ${d})
 
-    if [ "${d_IP}" == "${HOST_IPv4}" ]; then
+    if [ "${d_IP}" == "${PUBLIC_IPv4}" ]; then
         echo "Domain ${d} correctly resolves to IP ${d_IP}"
         ACME_DOMAINS="${ACME_DOMAINS} -d ${d}"
     else
-        echo "Domain ${d} resolved to '${d_IP}' The declared host IP is '${HOST_IPv4}'"
+        echo "Domain ${d} resolved to '${d_IP}' The declared host IP is '${PUBLIC_IPv4}'"
         exit
     fi
 done
 
 # Check that Reverse DNS is configured for the host IP
-PTR_HOST=$(dns_check_PTR ${HOST_IPv4})
-if [ "${PTR_HOST}" != "mail.${DOMAIN}" ]; then
-    echo "WARNING: the IP address ${HOST_IPv4} does not resolve back to 'mail.${DOMAIN}'"
+PTR_HOST=$(dns_check_PTR ${PUBLIC_IPv4})
+if [ "${PTR_HOST}" != "${MAIL_FQDN}" ]; then
+    echo "WARNING: the IP address ${PUBLIC_IPv4} does not resolve back to '${MAIL_FQDN}'"
     echo "Reverse DNS (aka a PTR record) is a strong indicator that you're not"
     echo "a spammer. Whoever provides your VPS should allow you to configure this."
     read -p "Press ENTER to continue, or Ctrl_C to exit. "
@@ -114,7 +128,7 @@ sed -i 's/#RUN_DKIMPROXY_IN=1/RUN_DKIMPROXY_IN=0/' /etc/default/dkimproxy
 # Generate our DKIM key for our DNS configuration
 DKIM_PUB=\$(for l in \$(grep -v 'PUBLIC KEY' /var/lib/dkimproxy/public.key); do echo -n \${l}; done)
 DKIM_DNS="v=DKIM1; k=rsa; p=\${DKIM_PUB}"
-SPF_DNS="v=spf1 a mx ip4:${HOST_IPv4} -all"
+SPF_DNS="v=spf1 a mx ip4:${PUBLIC_IPv4} -all"
 echo -e "\nThe following entry should be present in your DNS zone file: -\n"
 echo -e "
  mainsel._domainkey  TXT  600  \"\${DKIM_DNS}\"
@@ -149,7 +163,10 @@ lxc exec ${CONTAINER_NAME} chmod a+x build_container.sh
 lxc exec ${CONTAINER_NAME} bash build_container.sh
 
 # Populate the template for smtpd.conf
-cat smtpd.conf.template | sed -e "s/\${DOMAIN}/${DOMAIN}/g" |lxc exec ${CONTAINER_NAME} tee /etc/smtpd.conf
+cat smtpd.conf.template | sed \
+	-e "s/\${DOMAIN}/${DOMAIN}/g" \
+	-e "s/\${MAIL_FQDN}/${MAIL_FQDN}/g" \
+	|lxc exec ${CONTAINER_NAME} tee /etc/smtpd.conf
 lxc exec ${CONTAINER_NAME} systemctl restart opensmtpd
 
 # At this point, we should have a working SMTP server.
