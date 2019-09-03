@@ -125,7 +125,8 @@ fi
 # verification, and uncomment the DOMAIN variable.
 chgrp dkimproxy /var/lib/dkimproxy/private.key
 sed -E -i -e 's/#RUN_DKIMPROXY_IN=1/RUN_DKIMPROXY_IN=0/' \\
-          -e 's/^#?DOMAIN=.+/DOMAIN=${DOMAIN}/' /etc/default/dkimproxy
+          -e 's/^#?DOMAIN=.+/DOMAIN=${DOMAIN}/' \\
+          -e 's/^#?DKIM_HOSTNAME=.+/DKIM_HOSTNAME=${DOMAIN}/' /etc/default/dkimproxy
 
 # Generate our DKIM key for our DNS configuration
 DKIM_PUB=\$(for l in \$(grep -v 'PUBLIC KEY' /var/lib/dkimproxy/public.key); do echo -n \${l}; done)
