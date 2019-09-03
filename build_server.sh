@@ -124,8 +124,8 @@ fi
 # Ensure dkimproxy can read the private key, and disable DKIM incoming
 # verification, and uncomment the DOMAIN variable.
 chgrp dkimproxy /var/lib/dkimproxy/private.key
-sed -i -e 's/#RUN_DKIMPROXY_IN=1/RUN_DKIMPROXY_IN=0/' \\
-       -e 's/^#DOMAIN=/DOMAIN=/' /etc/default/dkimproxy
+sed -E -i -e 's/#RUN_DKIMPROXY_IN=1/RUN_DKIMPROXY_IN=0/' \\
+          -e 's/^#?DOMAIN=.+/DOMAIN=${MAIL_FQDN}/' /etc/default/dkimproxy
 
 # Generate our DKIM key for our DNS configuration
 DKIM_PUB=\$(for l in \$(grep -v 'PUBLIC KEY' /var/lib/dkimproxy/public.key); do echo -n \${l}; done)
@@ -209,4 +209,7 @@ lxc exec ${CONTAINER_NAME} bash configure_imap.sh
 # Install our roundcube Apache virtual host
 cat http_roundcube.conf.template | sed -e "s/\${DOMAIN}/${DOMAIN}/g" |lxc exec ${CONTAINER_NAME} tee /etc/apache2/sites-available/roundcube.conf
 lxc exec ${CONTAINER_NAME} -- bash -c 'a2ensite roundcube; systemctl restart apache2'
+
+echo "All done. Restarting the container to ensure all services come up."
+lxc restart ${CONTAINER_NAME}
 
