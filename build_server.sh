@@ -121,9 +121,11 @@ if ! grep 'ExecStartPre' /lib/systemd/system/opensmtpd.service; then
     sed -i 's/ExecStart=/ExecStartPre=\/bin\/sleep 3\nExecStart=/' /lib/systemd/system/opensmtpd.service
 fi
 
-# Ensure dkimproxy can read the private key, and disable DKIM incoming verification.
+# Ensure dkimproxy can read the private key, and disable DKIM incoming
+# verification, and uncomment the DOMAIN variable.
 chgrp dkimproxy /var/lib/dkimproxy/private.key
-sed -i 's/#RUN_DKIMPROXY_IN=1/RUN_DKIMPROXY_IN=0/' /etc/default/dkimproxy
+sed -i -e 's/#RUN_DKIMPROXY_IN=1/RUN_DKIMPROXY_IN=0/' \\
+       -e 's/^#DOMAIN=/DOMAIN=/' /etc/default/dkimproxy
 
 # Generate our DKIM key for our DNS configuration
 DKIM_PUB=\$(for l in \$(grep -v 'PUBLIC KEY' /var/lib/dkimproxy/public.key); do echo -n \${l}; done)
