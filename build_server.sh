@@ -20,11 +20,11 @@ fi
 
 . "config"
 
-WWW_FQDN="www.${DOMAIN}"
-WEBMAIL_FQDN="webmail.${DOMAIN}"
-MAIL_FQDN="ponder.${DOMAIN}"
+WEBMAIL_FQDN="{WEBMAIL_HOST}.${DOMAIN}"
+MAIL_FQDN="{SMTP_HOST}.${DOMAIN}"
+[ -n "${WWW_HOST}" ] && WWW_FQDN="${WWW_HOST}.${DOMAIN}"
 
-HOSTS="${MAIL_FQDN} ${WEBMAIL_FQDN}"
+HOSTS="${MAIL_FQDN} ${WEBMAIL_FQDN} ${WWW_FQDN}"
 
 # Stage 1 - make sure the DNS entries are correct for what we
 #           are about to do.

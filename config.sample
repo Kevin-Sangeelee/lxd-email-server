@@ -16,3 +16,11 @@ PRIMARY_USER="alice"
 CONTAINER_NAME="mymail"
 LXD_NETWORK="lxdbr0"
 
+# Define the hostname for your SMTP server and WebMail
+# These will become mail.example.com and webmail.example.com
+SMTP_HOST="mail"
+WEBMAIL_HOST="webmail"
+
+# Optionally, you can define a 'www' host. This will simply
+# include this host in the SSL/TLS certificate.
+# WWW_HOST="www"
