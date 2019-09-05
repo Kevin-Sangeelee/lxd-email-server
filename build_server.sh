@@ -114,7 +114,7 @@ echo "opensmtpd opensmtpd/root_address string ${PRIMARY_USER}"|debconf-set-selec
 
 apt-get install procps curl cron opensmtpd
 
-apt-get install apache2 opensmtpd dkimproxy
+apt-get install apache2 dkimproxy
 
 # Add a delay to smtpd startup to avoid binding to an unconfigured interface
 if ! grep 'ExecStartPre' /lib/systemd/system/opensmtpd.service; then
