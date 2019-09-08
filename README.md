@@ -20,6 +20,8 @@ Then make sure you're in the sudo group (e.g. `root@vps:~# adduser kevin sudo`) 
 ```bash
 sudo apt-get install snapd
 sudo snap install lxd
+sudo adduser <user> lxd
+sudo lxd init
 ```
 You should now make sure that you have DNS A records for your domain. The hosts `www`, `webmail`, and `mail` should all point to your IP address. Your reverse DNS should be configured such that your IP address resolves back to your mail host (e.g. 1.2.3.4 resolves to mail.example.com).
 ## Installation
@@ -37,8 +39,12 @@ There is no external IMAP port open and I haven't configured SMTP username/passw
 
 Any pull requests for generally useful additional features are welcome.
 
+## References
+The following sources were used for reference and testing: -
+
+
 ## Altnernative
-The project mail-in-a-box https://github.com/mail-in-a-box/mailinabox is a turnkey solution that's mature and appears to be well documented for non-technical users. My lxd-email-server project, on the other hand, is intended as more of a shortcut or reference for people who could configure this themselves, but choose not to for whatever reason.
+The project [mail-in-a-box](https://github.com/mail-in-a-box/mailinabox) is a turnkey solution that's mature and appears to be well documented for non-technical users. It is not intended to be modified after installation, whereas this lxd-email-server project is intended as more of a starting point for people who could configure this themselves, but choose not to for whatever reason.
 
 ## Acknowledgements
 All credits go to the people who contribute to the projects mentioned here - OpenSMTPD, Dovecot, Roundcube, DKIMProxy, acme.sh, and of course Apache, GNU, Linux, and the Debian maintainers, whose well considered efforts mean that I can script an automated installation and configuration in a small bash script. Thanks!
