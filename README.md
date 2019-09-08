@@ -42,6 +42,10 @@ Any pull requests for generally useful additional features are welcome.
 ## References
 The following sources were used for reference and testing: -
 
+See my article on my Wordpress blog on the background and references for this script.
+
+https://www.susa.net/wordpress/2019/08/lxd-email-smtp-imap-webmail-with-opensmtpd-dovecot-and-roundcube/
+
 
 ## Altnernative
 The project [mail-in-a-box](https://github.com/mail-in-a-box/mailinabox) is a turnkey solution that's mature and appears to be well documented for non-technical users. It is not intended to be modified after installation, whereas this lxd-email-server project is intended as more of a starting point for people who could configure this themselves, but choose not to for whatever reason.
