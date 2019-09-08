@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# (C)2019 Kevin Sangeelee.
+# Released under the terms of the GNU GPL Version 2
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+
 . "functions"
 
 PREREQUISITES="yes"	# Assume all ok, unless we discover otherwise
