@@ -98,6 +98,7 @@ else
     add_proxy_port "${CONTAINER_NAME}" "https" "${HOST_IPv4}:443" "${CONTAINER_IP}:443"
     add_proxy_port "${CONTAINER_NAME}" "smtp" "${HOST_IPv4}:25" "${CONTAINER_IP}:25"
     add_proxy_port "${CONTAINER_NAME}" "esmtp" "${HOST_IPv4}:587" "${CONTAINER_IP}:587"
+    add_proxy_port "${CONTAINER_NAME}" "imap2" "${HOST_IPv4}:143" "${CONTAINER_IP}:143"
 fi
 
 # Generate a script to run in the container to configure OpenSMTPD
